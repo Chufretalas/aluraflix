@@ -1,6 +1,10 @@
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { PrismaClient } from '@prisma/client';
 
-export const GET = (({ url }) => {
-    return new Response(JSON.stringify({ test: 19 }))
+const prisma = new PrismaClient()
+
+export const GET = (async ({ url }) => {
+    let allVideos = await prisma.aluraflix_videos.findMany()
+    return new Response(JSON.stringify(allVideos))
 }) satisfies RequestHandler;
