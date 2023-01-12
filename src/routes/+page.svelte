@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
     import LinkButton from "$lib/LinkButton.svelte";
     import SectionCard from "$lib/SectionCard.svelte";
     import Title from "$lib/Title.svelte";
+
+    let inputVideosSlug: number;
 </script>
 
 <header>
@@ -23,7 +25,7 @@
             <Title>Endpoints</Title>
             <p>Para interagir com API, use as URLs indicadas abaixo:</p>
             <div class="endpoints-list-wrapper">
-                <ul>
+                <ul class="endpoints-list__get">
                     <li class="endpoint-item">
                         <div class="endpoint-item__main">
                             <span>http://localhost:5173/videos</span>
@@ -32,6 +34,23 @@
                             >
                         </div>
                         <p>Retorna TODOS os filmes na base de dados</p>
+                    </li>
+                    <li class="endpoint-item">
+                        <div class="endpoint-item__main">
+                            <span>http://localhost:5173/videos/</span>
+                            <input
+                                type="number"
+                                name="inputVideosSlug"
+                                placeholder="2..."
+                                id="inputVideoSlug"
+                                bind:value={inputVideosSlug}
+                            />
+                            <LinkButton
+                                url={`http://localhost:5173/videos/${inputVideosSlug}`}
+                                >Ir</LinkButton
+                            >
+                        </div>
+                        <p>{"Retorna o filme indicado pela id /video/<id>"}</p>
                     </li>
                 </ul>
                 <ul />
@@ -71,8 +90,14 @@
         justify-content: center;
     }
 
+    .endpoints-list__get {
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+    }
+
     .endpoint-item {
-        width: 290px;
+        width: 320px;
         box-shadow: 0 0 1px white;
         border-radius: 5px;
         padding: 3px;
@@ -90,5 +115,14 @@
     .endpoint-item__main {
         display: flex;
         justify-content: space-between;
+    }
+
+    #inputVideoSlug {
+        background-color: #030012;
+        border: 1px solid #f5ff9f;
+        border-radius: 3px;
+        width: 3rem;
+        color: #f5ff9f;
+        font-weight: bold;
     }
 </style>
