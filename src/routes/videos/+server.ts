@@ -6,5 +6,6 @@ const prisma = new PrismaClient()
 
 export const GET = (async ({ url }) => {
     let allVideos = await prisma.aluraflix_videos.findMany()
+    prisma.$disconnect()
     return new Response(JSON.stringify(allVideos))
 }) satisfies RequestHandler;
