@@ -1,7 +1,6 @@
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { PrismaClient, type aluraflix_videos } from '@prisma/client';
-import type IPostVideo from '$lib/interfaces/IPostVideos';
 
 async function getJson(request: Request) {
     try {
@@ -42,24 +41,24 @@ export const GET = (async ({ url }) => {
 
 export const POST = (async ({ request }) => {
     try {
-        const requestData: IPostVideo = await request.json()
+        const { data, success } = await getJson(request)
 
-        if ("titulo" in requestData && "descricao" in requestData) {
+        if (!success) throw error(400, "body inválido")
 
-            if (!requestData.titulo) throw new Error("titulo não pode ser vazio")
-            else if (requestData.titulo.length > 40) throw new Error("titulo não pode ter mais que 40 caracteres")
-            else if (!requestData.descricao) throw new Error("descrição não pode ser vazia")
+        if (!("titulo" in data && "descricao" in data)) throw error(400, "campos 'titulo e descricao são obrigatórios")
+        if (!data.titulo || data.titulo.length > 40) throw error(400, "titulo não pode ser vazio e tem limite de 40 caracteres")
+        if (!data.descricao) throw error(400, "descrição não pode ser vazia")
 
-            const dbResponse = await createEntry(requestData.titulo, requestData.descricao)
-            prisma.$disconnect()
+        const dbResponse = await createEntry(data.titulo, data.descricao)
+        prisma.$disconnect()
 
-            return new Response(JSON.stringify(dbResponse))
-        }
+        return new Response(JSON.stringify({ newVideo: dbResponse }))
 
-        throw new Error("incomplete body input")
-
-    } catch (err: any) {
-        throw error(400, "Erro no POST: " + err.message)
+    } 
+    catch (err: any) {
+        prisma.$disconnect()
+        if(err.status == 400) throw err
+        throw error(500, "unkown error")
     }
 }) satisfies RequestHandler
 
