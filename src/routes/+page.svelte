@@ -46,8 +46,9 @@
                                 bind:value={inputVideosSlug}
                             />
                             <LinkButton
-                                url={`http://localhost:5173/videos/${inputVideosSlug}`}
-                                >Ir</LinkButton
+                                url={`http://localhost:5173/videos/${
+                                    inputVideosSlug ?? "2"
+                                }`}>Ir</LinkButton
                             >
                         </div>
                         <p>{"Retorna o filme indicado pela id /video/<id>"}</p>
