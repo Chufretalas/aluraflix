@@ -1,38 +1,30 @@
-# create-svelte
+# aluraflix
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A fake videos API made with sveltekit, made by me for a Alura coding back-end challenge. 
+Since this is a alura project and the interface is being done in portuguese, the documentation will be as well.
 
-## Creating a project
+## Usando a API (endpoints)
 
-If you're seeing this, you've probably already done this step. Congrats!
+> **Atualmente a API não está no ar para qualquer um usar, mas planejo colocá-la na vercel quando estiver pronta.**
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+#### GET
+  - `/videos` retorna todos os videos cadastrados na base de dados
+  - `/videos/[id]` retorna um video de acordo com sua id ou um erro **400** se o video não for encontrado
+    - exemplo: `/videos/1` retorna o video com a id=1, se ele existir na base de dados
+    
+#### POST
+  - `/videos` recebe um JSON no corpo da requisição com os campos *titulo* e *descrição*, ambos de acordo com as regras indicadas no final desse README, e cria uma nova entrada de vídeo na base de dados. Retorna o video criado ou um erro 400 se a requisição for inválida.
+  
+#### PUT/PATCH (requisições de PUT e PATCH são tratadas igualmente)
+  - `/videos/[id]` recebe um JSON no corpo da requisição com os campos *titulo*, *descrição*  e/ou *url*, nesse caso, todos os campos são opcionais, mas ainda seguem suas respectivas regras e tipos de dados. Altera a o vídeo indicado pela id na url com as informações passadas no body, se alguma informação for inválida, por exemplo um titulo grande demais, o campo é ignorado e a edição procede normalmente. Retorna o video editado ou um erro 400 em caso de requisição inválida.
+  
+ #### DELETE
+  - `/videos/[id]` deleta o video indicado pela id na url. Retorna o vídeo deletetado ou um erro 400 em caso de requisição inválida.
+  
+## Dados
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+* video
+  * id: SERIAL PRIMARY KEY (int com auto-incremento)
+  * titulo: VARCHAR(40) NOT NULL
+  * descricao: TEXT NOT NULL
+  * url: VARCHAR(100) NOT NULL
