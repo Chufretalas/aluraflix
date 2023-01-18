@@ -18,7 +18,7 @@ model aluraflix_videos {
 
 model categorias {
   id               Int                @id @default(autoincrement())
-  titulo           String             @db.VarChar(30)
+  titulo           String             @unique(map: "titulo_unique") @db.VarChar(30)
   cor              String             @db.VarChar(6)
   aluraflix_videos aluraflix_videos[]
 }

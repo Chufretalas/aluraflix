@@ -3,42 +3,27 @@ import type { RequestHandler } from './$types';
 import { PrismaClient, type aluraflix_videos } from '@prisma/client';
 import getJson from '$lib/server/api_helpers/getJson';
 
-async function createEntry(id: number | null, titulo: string, descricao: string): Promise<aluraflix_videos> {
-    if (id) {
-        try {
-            const dbResponse = await prisma.aluraflix_videos.create({
-                data: {
-                    id: id,
-                    titulo: titulo,
-                    descricao: descricao,
-                    url: `http://localhost:5173/videos/${id}`
-                }
-            })
-            return dbResponse
-        } catch (err: any) {
-            if (err.message.includes("Unique constraint failed on the fields: (`id`)")) {
-                throw error(400, `video com id ${id}, já existe`)
+async function createEntry(id: number | undefined, titulo: string, descricao: string, categoria_id: number = 1): Promise<aluraflix_videos> {
+    try {
+        const dbResponse = await prisma.aluraflix_videos.create({
+            data: {
+                id: id,
+                titulo: titulo,
+                descricao: descricao,
+                url: `http://localhost:5173/videos/${id}`,
+                categoria_id: categoria_id
             }
-            throw error(500, "unkown error")
+        })
+        return dbResponse
+    } catch (err: any) {
+        if (err.message.includes("Unique constraint failed on the fields: (`id`)")) {
+            throw error(400, `video com id ${id}, já existe`)
         }
+        if (err.message.includes("Foreign key constraint failed on the field: `aluraflix_videos_categoria_id_fkey (index)`")) {
+            throw error(400, `categoria_id: ${categoria_id} não é válido`)
+        }
+        throw error(500, "unkown error")
     }
-
-    const dbCreateResponse = await prisma.aluraflix_videos.create({
-        data: {
-            titulo: titulo,
-            descricao: descricao,
-            url: "http://localhost:5173/videos/"
-        }
-    })
-    const dbUpdateResponse = await prisma.aluraflix_videos.update({
-        where: {
-            id: dbCreateResponse.id
-        },
-        data: {
-            url: dbCreateResponse.url + dbCreateResponse.id
-        }
-    })
-    return dbUpdateResponse
 }
 
 const prisma = new PrismaClient()
@@ -71,8 +56,9 @@ export const POST = (async ({ request }) => {
         if (!("titulo" in data && "descricao" in data)) throw error(400, "campos 'titulo e descricao são obrigatórios")
         if (!data.titulo || data.titulo.length > 40) throw error(400, "titulo não pode ser vazio e tem limite de 40 caracteres")
         if (!data.descricao) throw error(400, "descrição não pode ser vazia")
+        if (data.categoria_id && (isNaN(+data.categoria_id) || !Number.isInteger(+data.categoria_id))) throw error(400, "categoria_id deve ser um numero inteiro")
 
-        const dbResponse = await createEntry(data.id ?? null, data.titulo, data.descricao)
+        const dbResponse = await createEntry(data.id, data.titulo, data.descricao, +data.categoria_id)
         prisma.$disconnect()
 
         return new Response(JSON.stringify({ newVideo: dbResponse }))

@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS aluraflix_videos (
 
 CREATE TABLE IF NOT EXISTS categorias (
     id SERIAL PRIMARY KEY,
-    titulo VARCHAR(30) NOT NULL,
+    titulo VARCHAR(30) UNIQUE NOT NULL,
     cor VARCHAR(6) NOT NULL
 );
 
