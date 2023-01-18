@@ -8,8 +8,17 @@ datasource db {
 }
 
 model aluraflix_videos {
-  id        Int    @id @default(autoincrement())
-  titulo    String @db.VarChar(40)
-  descricao String
-  url       String @db.VarChar(100)
+  id           Int         @id @default(autoincrement())
+  titulo       String      @db.VarChar(40)
+  descricao    String
+  url          String      @db.VarChar(100)
+  categoria_id Int?        @default(1)
+  categorias   categorias? @relation(fields: [categoria_id], references: [id], onDelete: SetDefault)
+}
+
+model categorias {
+  id               Int                @id @default(autoincrement())
+  titulo           String             @db.VarChar(30)
+  cor              String             @db.VarChar(6)
+  aluraflix_videos aluraflix_videos[]
 }

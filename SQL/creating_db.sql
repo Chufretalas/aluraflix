@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS aluraflix_videos (
+    id SERIAL PRIMARY KEY,
+    titulo VARCHAR(40) NOT NULL,
+    descricao TEXT NOT NULL,
+    url VARCHAR(100) NOT NULL
+)
+
+CREATE TABLE IF NOT EXISTS categorias (
+    id SERIAL PRIMARY KEY,
+    titulo VARCHAR(30) NOT NULL,
+    cor VARCHAR(6) NOT NULL
+);
+
+INSERT INTO categorias VALUES(1, 'LIVRE', '64f25a');
+
+ALTER TABLE aluraflix_videos
+    ADD categoria_id INT DEFAULT 1 REFERENCES categorias(id) ON DELETE SET DEFAULT ON UPDATE CASCADE;
