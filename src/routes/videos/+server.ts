@@ -33,8 +33,11 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
     }
 }
 
+// ======================================================================= //
+
 const prisma = new PrismaClient()
 
+// ======================================================================= //
 
 export const GET = (async ({ url }) => {
     try {
