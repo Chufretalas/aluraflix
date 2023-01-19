@@ -22,3 +22,30 @@ export const GET = (async ({ params }) => {
         throw error(500, "unkown error")
     }
 }) satisfies RequestHandler;
+
+// ======================================================================= //
+
+export const DELETE = (async ({ params }) => {
+    if (isNaN(+params.slug) || !(Number.isInteger(+params.slug))) {
+        prisma.$disconnect()
+        throw error(400, "categoria id deve ser um numero inteiro")
+    }
+
+    try {
+        const response = await prisma.categorias.delete({
+            where: {
+                id: +params.slug
+            }
+        })
+        prisma.$disconnect()
+
+        return new Response(JSON.stringify({
+            deletedVideo: response
+        }))
+
+    } catch (er: any) {
+        prisma.$disconnect()
+        if (er.message.includes("Record to delete does not exist")) throw error(400, `categoria com id: ${params.slug} não existe`)
+        throw error(500, "unkown error")
+    }
+}) satisfies RequestHandler;

@@ -94,7 +94,7 @@ async function PUTPATCHHandler(request: Request, params: any) {
             data: finalData
         })
         prisma.$disconnect()
-        return new Response(JSON.stringify({ success: true, updatedVideo: response }))
+        return new Response(JSON.stringify({ updatedVideo: response }))
 
     } catch (er: any) {
         prisma.$disconnect()
