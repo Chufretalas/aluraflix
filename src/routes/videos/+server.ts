@@ -3,6 +3,45 @@ import type { RequestHandler } from './$types';
 import { PrismaClient, type aluraflix_videos } from '@prisma/client';
 import getJson from '$lib/server/api_helpers/getJson';
 
+
+
+const prisma = new PrismaClient()
+
+// ======================================================================= //
+
+export const GET = (async ({ url }) => {
+    const search = url.searchParams.get("search")
+    if(search) {
+        try {
+            let response = await prisma.aluraflix_videos.findMany({
+                where: {
+                    titulo: {
+                        contains: search,
+                        mode: "insensitive"
+                    }
+                }
+            })
+            prisma.$disconnect()
+            return new Response(JSON.stringify(response))
+        } catch (err) {
+            prisma.$disconnect()
+            throw error(400, "unkown error")
+        }
+    }
+    try {
+        let allVideos = await prisma.aluraflix_videos.findMany({
+            orderBy: [{ id: "asc" }]
+        })
+        prisma.$disconnect()
+        return new Response(JSON.stringify(allVideos))
+    } catch (er) {
+        prisma.$disconnect()
+        throw error(500, "unkown error")
+    }
+}) satisfies RequestHandler;
+
+// ======================================================================= //
+
 async function createEntry(id: number | undefined, titulo: string, descricao: string, categoria_id: number = 1): Promise<aluraflix_videos> {
     try {
         const dbResponse = await prisma.aluraflix_videos.create({
@@ -32,25 +71,6 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
         throw error(500, "unkown error")
     }
 }
-
-// ======================================================================= //
-
-const prisma = new PrismaClient()
-
-// ======================================================================= //
-
-export const GET = (async ({ url }) => {
-    try {
-        let allVideos = await prisma.aluraflix_videos.findMany({
-            orderBy: [{ id: "asc" }]
-        })
-        prisma.$disconnect()
-        return new Response(JSON.stringify(allVideos))
-    } catch (er) {
-        prisma.$disconnect()
-        throw error(500, "unkown error")
-    }
-}) satisfies RequestHandler;
 
 // ======================================================================= //
 
