@@ -6,19 +6,19 @@ import getJson from '$lib/server/api_helpers/getJson';
 const prisma = new PrismaClient()
 
 export const GET = (async ({ params }) => {
-    if (isNaN(+params.slug) || !(Number.isInteger(+params.slug))) {
+    if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "video id deve ser um numero inteiro")
     }
 
     try {
-        const response = await prisma.aluraflix_videos.findFirstOrThrow({ where: { id: +params.slug } })
+        const response = await prisma.aluraflix_videos.findFirstOrThrow({ where: { id: +params.id } })
         prisma.$disconnect()
         return new Response(JSON.stringify(response))
 
     } catch (er: any) {
         prisma.$disconnect()
-        if (er.message.includes("found")) throw error(400, `video com id: ${params.slug} não existe`)
+        if (er.message.includes("found")) throw error(400, `video com id: ${params.id} não existe`)
         throw error(500, "unkown error")
     }
 }) satisfies RequestHandler;
@@ -26,7 +26,7 @@ export const GET = (async ({ params }) => {
 // ======================================================================= //
 
 export const DELETE = (async ({ params }) => {
-    if (isNaN(+params.slug) || !(Number.isInteger(+params.slug))) {
+    if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "video id deve ser um numero inteiro")
     }
@@ -34,7 +34,7 @@ export const DELETE = (async ({ params }) => {
     try {
         const response = await prisma.aluraflix_videos.delete({
             where: {
-                id: +params.slug
+                id: +params.id
             }
         })
         prisma.$disconnect()
@@ -45,7 +45,7 @@ export const DELETE = (async ({ params }) => {
         
     } catch (er: any) {
         prisma.$disconnect()
-        if (er.message.includes("Record to delete does not exist")) throw error(400, `video com id: ${params.slug} não existe`)
+        if (er.message.includes("Record to delete does not exist")) throw error(400, `video com id: ${params.id} não existe`)
         throw error(500, "unkown error")
     }
 }) satisfies RequestHandler;
@@ -53,7 +53,7 @@ export const DELETE = (async ({ params }) => {
 // ======================================================================= //
 
 async function PUTPATCHHandler(request: Request, params: any) {
-    if (isNaN(+params.slug) || !(Number.isInteger(+params.slug))) {
+    if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "video id deve ser um numero inteiro")
     }
@@ -89,7 +89,7 @@ async function PUTPATCHHandler(request: Request, params: any) {
     try {
         const response = await prisma.aluraflix_videos.update({
             where: {
-                id: +params.slug
+                id: +params.id
             },
             data: finalData
         })
@@ -98,7 +98,7 @@ async function PUTPATCHHandler(request: Request, params: any) {
 
     } catch (er: any) {
         prisma.$disconnect()
-        if (er.message.includes("Record to update not found")) throw error(400, `video com id: ${params.slug} não existe`)
+        if (er.message.includes("Record to update not found")) throw error(400, `video com id: ${params.id} não existe`)
         throw error(500, "unkown error")
     }
 }

@@ -7,19 +7,19 @@ import validateColor from '$lib/server/api_helpers/validate_color';
 const prisma = new PrismaClient()
 
 export const GET = (async ({ params }) => {
-    if (isNaN(+params.slug) || !(Number.isInteger(+params.slug))) {
+    if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "categoria id deve ser um numero inteiro")
     }
 
     try {
-        const response = await prisma.categorias.findFirstOrThrow({ where: { id: +params.slug } })
+        const response = await prisma.categorias.findFirstOrThrow({ where: { id: +params.id } })
         prisma.$disconnect()
         return new Response(JSON.stringify(response))
 
     } catch (er: any) {
         prisma.$disconnect()
-        if (er.message.includes("found")) throw error(400, `video com id: ${params.slug} não existe`)
+        if (er.message.includes("found")) throw error(400, `video com id: ${params.id} não existe`)
         throw error(500, "unkown error")
     }
 }) satisfies RequestHandler;
@@ -27,15 +27,19 @@ export const GET = (async ({ params }) => {
 // ======================================================================= //
 
 export const DELETE = (async ({ params }) => {
-    if (isNaN(+params.slug) || !(Number.isInteger(+params.slug))) {
+    if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "categoria id deve ser um numero inteiro")
+    }
+    if (+params.id === 1) {
+        prisma.$disconnect()
+        throw error(400, "não é permitido deletar a categoria LIVRE")
     }
 
     try {
         const response = await prisma.categorias.delete({
             where: {
-                id: +params.slug
+                id: +params.id
             }
         })
         prisma.$disconnect()
@@ -46,7 +50,7 @@ export const DELETE = (async ({ params }) => {
 
     } catch (er: any) {
         prisma.$disconnect()
-        if (er.message.includes("Record to delete does not exist")) throw error(400, `categoria com id: ${params.slug} não existe`)
+        if (er.message.includes("Record to delete does not exist")) throw error(400, `categoria com id: ${params.id} não existe`)
         throw error(500, "unkown error")
     }
 }) satisfies RequestHandler;
@@ -54,7 +58,7 @@ export const DELETE = (async ({ params }) => {
 // ======================================================================= //
 
 async function PUTPATCHHandler(request: Request, params: any) {
-    if (isNaN(+params.slug) || !(Number.isInteger(+params.slug))) {
+    if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "categoria id deve ser um numero inteiro")
     }
@@ -83,7 +87,7 @@ async function PUTPATCHHandler(request: Request, params: any) {
     try {
         const response = await prisma.categorias.update({
             where: {
-                id: +params.slug
+                id: +params.id
             },
             data: finalData
         })
@@ -92,7 +96,7 @@ async function PUTPATCHHandler(request: Request, params: any) {
 
     } catch (er: any) {
         prisma.$disconnect()
-        if (er.message.includes("Record to update not found")) throw error(400, `categoria com id: ${params.slug} não existe`)
+        if (er.message.includes("Record to update not found")) throw error(400, `categoria com id: ${params.id} não existe`)
         throw error(500, "unkown error")
     }
 }

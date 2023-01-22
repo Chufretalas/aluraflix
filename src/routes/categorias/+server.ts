@@ -79,7 +79,7 @@ export const POST = (async ({ request }) => {
         const dbResponse = await createEntry(data.id, data.titulo, data.cor)
         prisma.$disconnect()
 
-        return new Response(JSON.stringify({ novaCategoria: dbResponse }))
+        return new Response(JSON.stringify({ novaCategoria: dbResponse }), {status: 201})
 
     }
     catch (err: any) {

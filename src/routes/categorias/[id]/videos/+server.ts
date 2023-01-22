@@ -1,25 +1,23 @@
 import { error } from '@sveltejs/kit';
-import type { RequestHandler } from '../$types';
+import type { RequestHandler } from '@sveltejs/kit';
 import { PrismaClient } from '@prisma/client';
-import getJson from '$lib/server/api_helpers/getJson';
-import validateColor from '$lib/server/api_helpers/validate_color';
 
 const prisma = new PrismaClient()
 
 export const GET = (async ({ params }) => {
 
-    if (isNaN(+params.slug) || !(Number.isInteger(+params.slug))) {
+    if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "categoria id deve ser um numero inteiro")
     }
 
     try {
-        const response = await prisma.aluraflix_videos.findMany({ where: { categoria_id: +params.slug } })
+        const response = await prisma.aluraflix_videos.findMany({ where: { categoria_id: +params.id } })
         if (response.length === 0) {
-            const respCategorias = await prisma.categorias.findFirst({ where: { id: +params.slug } })
+            const respCategorias = await prisma.categorias.findFirst({ where: { id: +params.id } })
             if (!respCategorias) {
                 prisma.$disconnect()
-                throw error(400, `o id de catgoria: ${+params.slug}, não existe`)
+                throw error(400, `o id de catgoria: ${+params.id}, não existe`)
             }
         }
         prisma.$disconnect()
@@ -28,7 +26,7 @@ export const GET = (async ({ params }) => {
     } catch (er: any) {
         prisma.$disconnect()
         if(er.status == 400) throw er
-        if (er.message.includes("found")) throw error(400, `video com id: ${params.slug} não existe`)
+        if (er.message.includes("found")) throw error(400, `video com id: ${params.id} não existe`)
         throw error(500, "unkown error")
     }
 }) satisfies RequestHandler;
