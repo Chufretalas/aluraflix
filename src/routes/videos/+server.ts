@@ -11,7 +11,9 @@ const prisma = new PrismaClient()
 
 export const GET = (async ({ url }) => {
     const search = url.searchParams.get("search")
-    if(search) {
+    const page = url.searchParams.get("page")
+    let videos
+    if (search) {
         try {
             let response = await prisma.aluraflix_videos.findMany({
                 where: {
@@ -22,22 +24,42 @@ export const GET = (async ({ url }) => {
                 }
             })
             prisma.$disconnect()
-            return new Response(JSON.stringify(response))
+            videos = response
         } catch (err) {
             prisma.$disconnect()
             throw error(400, "unkown error")
         }
+    } else {
+        try {
+            let allVideos = await prisma.aluraflix_videos.findMany({
+                orderBy: [{ id: "asc" }]
+            })
+            prisma.$disconnect()
+            videos = allVideos
+        } catch (er) {
+            prisma.$disconnect()
+            throw error(500, "unkown error")
+        }
     }
-    try {
-        let allVideos = await prisma.aluraflix_videos.findMany({
-            orderBy: [{ id: "asc" }]
-        })
-        prisma.$disconnect()
-        return new Response(JSON.stringify(allVideos))
-    } catch (er) {
-        prisma.$disconnect()
-        throw error(500, "unkown error")
+
+    let final_videos: Map<string, aluraflix_videos[]> = new Map()
+    if (page && videos.length !== 0) {
+        if (isNaN(+page) || !(Number.isInteger(+page))) throw error(400, "page deve ser um valor inteiro")
+        
+        let i = 1;
+        while (videos.length > 5) {
+            final_videos.set(`${i}`, videos.splice(0, 5))
+            console.log(videos.length)
+            i++
+        }
+        final_videos.set(`${i}`, videos)
+
+        let response = final_videos.get(page)
+        if (!response) throw error(400, `page inválido, as pages só vão até ${final_videos.size}`)
+        return new Response(JSON.stringify(response))
     }
+
+    return new Response(JSON.stringify(videos))
 }) satisfies RequestHandler;
 
 // ======================================================================= //
