@@ -2,6 +2,7 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { PrismaClient, type aluraflix_videos } from '@prisma/client';
 import getJson from '$lib/server/api_helpers/getJson';
+import paginate from '$lib/server/api_helpers/paginate';
 
 
 
@@ -42,20 +43,13 @@ export const GET = (async ({ url }) => {
         }
     }
 
-    let final_videos: Map<string, aluraflix_videos[]> = new Map()
     if (page && videos.length !== 0) {
         if (isNaN(+page) || !(Number.isInteger(+page))) throw error(400, "page deve ser um valor inteiro")
-        
-        let i = 1;
-        while (videos.length > 5) {
-            final_videos.set(`${i}`, videos.splice(0, 5))
-            console.log(videos.length)
-            i++
-        }
-        final_videos.set(`${i}`, videos)
 
-        let response = final_videos.get(page)
-        if (!response) throw error(400, `page inválido, as pages só vão até ${final_videos.size}`)
+        const finalVideos = paginate(videos);
+
+        let response = finalVideos.get(page)
+        if (!response) throw error(400, `page inválido, as pages só vão até ${finalVideos.size}`)
         return new Response(JSON.stringify(response))
     }
 

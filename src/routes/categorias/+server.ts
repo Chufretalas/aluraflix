@@ -1,4 +1,5 @@
 import getJson from "$lib/server/api_helpers/getJson";
+import paginate from "$lib/server/api_helpers/paginate";
 import validateColor from "$lib/server/api_helpers/validate_color";
 import { PrismaClient, type categorias } from "@prisma/client";
 import { error } from "@sveltejs/kit";
@@ -7,14 +8,24 @@ import type { RequestHandler } from "../videos/$types";
 const prisma = new PrismaClient()
 
 export const GET = (async ({ url }) => {
+    const page = url.searchParams.get("page")
     try {
         let allCategories = await prisma.categorias.findMany({
             orderBy: [{ id: "asc" }]
         })
         prisma.$disconnect()
+        if (page && allCategories.length !== 0) {
+            if (isNaN(+page) || !(Number.isInteger(+page))) throw error(400, "page deve ser um valor inteiro")
+            const finalCategories = paginate(allCategories);
+
+            let response = finalCategories.get(page)
+            if (!response) throw error(400, `page inválido, as pages só vão até ${finalCategories.size}`)
+            return new Response(JSON.stringify(response))
+        }
         return new Response(JSON.stringify(allCategories))
-    } catch (er) {
+    } catch (er: any) {
         prisma.$disconnect()
+        if (er.status === 400) throw er
         throw error(500, "unkown error")
     }
 }) satisfies RequestHandler;
