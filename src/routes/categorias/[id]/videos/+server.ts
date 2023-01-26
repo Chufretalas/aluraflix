@@ -28,6 +28,6 @@ export const GET = (async ({ params, request }) => {
         prisma.$disconnect()
         if(er.status == 400) throw er
         if (er.message.includes("found")) throw error(400, `video com id: ${params.id} não existe`)
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }) satisfies RequestHandler;

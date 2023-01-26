@@ -15,3 +15,9 @@ INSERT INTO categorias VALUES(1, 'LIVRE', '64f25a');
 
 ALTER TABLE aluraflix_videos
     ADD categoria_id INT DEFAULT 1 REFERENCES categorias(id) ON DELETE SET DEFAULT ON UPDATE CASCADE;
+
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    nome VARCHAR(20) PRIMARY KEY,
+    senha TEXT NOT NULL
+);

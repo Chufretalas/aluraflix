@@ -30,7 +30,7 @@ export const GET = (async ({ url, request }) => {
             videos = response
         } catch (err) {
             prisma.$disconnect()
-            throw error(400, "unkown error")
+            throw error(400, "unknown error")
         }
     } else {
         try {
@@ -41,7 +41,7 @@ export const GET = (async ({ url, request }) => {
             videos = allVideos
         } catch (er) {
             prisma.$disconnect()
-            throw error(500, "unkown error")
+            throw error(500, "unknown error")
         }
     }
 
@@ -78,7 +78,7 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
                 try {
                     return await createEntry(id, titulo, descricao, url, categoria_id)
                 } catch (err2) {
-                    throw error(500, "unkown error")
+                    throw error(500, "unknown error")
                 }
             }
             throw error(400, `video com id: ${id}, já existe`)
@@ -86,7 +86,7 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
         if (err.message.includes("Foreign key constraint failed on the field: `aluraflix_videos_categoria_id_fkey (index)`")) {
             throw error(400, `categoria_id: ${categoria_id} não é válido`)
         }
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }
 
@@ -120,7 +120,7 @@ export const POST = (async ({ request }) => {
     catch (err: any) {
         prisma.$disconnect()
         if (err.status == 400) throw err
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }) satisfies RequestHandler
 

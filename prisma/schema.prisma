@@ -22,3 +22,8 @@ model categorias {
   cor              String             @db.VarChar(6)
   aluraflix_videos aluraflix_videos[]
 }
+
+model usuarios {
+  nome  String @id @db.VarChar(20)
+  senha String
+}

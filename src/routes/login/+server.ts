@@ -1,11 +1,15 @@
 import getJson from "$lib/server/api_helpers/getJson"
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from './$types';
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
 import * as dotenv from "dotenv"
 
 dotenv.config()
+
+const prisma = new PrismaClient()
 
 export const POST = (async ({ request }) => {
     try {
@@ -13,15 +17,23 @@ export const POST = (async ({ request }) => {
 
         if (!success) throw error(400, "body inválido")
 
-        if (!data.usuario) throw error(400, "campo 'usuario' é obrigatório")
+        if (!data.nome) throw error(400, "campo 'nome' é obrigatório")
         if (!data.senha) throw error(400, "campo 'senha' é obrigatório")
 
-        const { usuario, senha } = data;
+        const { nome, senha } = data;
 
-        if (usuario == "chuf" && senha == "123abc") { // TODO: create a real user system
+        const user = await prisma.usuarios.findFirstOrThrow({
+            where: { nome }
+        })
+        
+        prisma.$disconnect()
+
+        const is_valid = await bcrypt.compareSync(senha, user.senha)
+
+        if (is_valid) {
             const token = jwt.sign(
                 {
-                    usuario,
+                    nome,
                 },
                 process.env.SECRET_KEY_JWT as string,
                 {
@@ -35,7 +47,11 @@ export const POST = (async ({ request }) => {
 
     }
     catch (err: any) {
+        prisma.$disconnect()
+        if (err.message && err.message.includes("No usuarios found")) {
+            throw error(401, "usuário inexistente")
+        }
         if (err.status == 400 || err.status == 401) throw err
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }) satisfies RequestHandler

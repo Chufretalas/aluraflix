@@ -22,7 +22,7 @@ export const GET = (async ({ params, request }) => {
     } catch (er: any) {
         prisma.$disconnect()
         if (er.message.includes("found")) throw error(400, `video com id: ${params.id} não existe`)
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }) satisfies RequestHandler;
 
@@ -54,7 +54,7 @@ export const DELETE = (async ({ params, request }) => {
     } catch (er: any) {
         prisma.$disconnect()
         if (er.message.includes("Record to delete does not exist")) throw error(400, `categoria com id: ${params.id} não existe`)
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }) satisfies RequestHandler;
 
@@ -101,7 +101,7 @@ async function PUTPATCHHandler(request: Request, params: any) {
     } catch (er: any) {
         prisma.$disconnect()
         if (er.message.includes("Record to update not found")) throw error(400, `categoria com id: ${params.id} não existe`)
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }
 

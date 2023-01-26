@@ -28,7 +28,7 @@ export const GET = (async ({ url, request }) => {
     } catch (er: any) {
         prisma.$disconnect()
         if (er.status === 400) throw er
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }) satisfies RequestHandler;
 
@@ -51,7 +51,7 @@ async function createEntry(id: number | undefined, titulo: string, cor: string):
                 try {
                     return await createEntry(id, titulo, cor)
                 } catch (err2) {
-                    throw error(500, "unkown error")
+                    throw error(500, "unknown error")
                 }
             }
             throw error(400, `categoria com id: ${id}, já existe`)
@@ -59,7 +59,7 @@ async function createEntry(id: number | undefined, titulo: string, cor: string):
         if (err.message.includes("Unique constraint failed on the fields: (`titulo`)")) {
             throw error(400, `titulo: '${titulo.toUpperCase()}' já existe`)
         }
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }
 
@@ -89,6 +89,6 @@ export const POST = (async ({ request }) => {
         prisma.$disconnect()
         console.log(err)
         if (err.status == 400) throw err
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }) satisfies RequestHandler

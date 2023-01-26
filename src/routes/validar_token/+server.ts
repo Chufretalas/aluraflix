@@ -27,6 +27,6 @@ export const POST = (async ({ request }) => {
     
     catch (err: any) {
         if (err.status == 400 || err.status == 401) throw err
-        throw error(500, "unkown error")
+        throw error(500, "unknown error")
     }
 }) satisfies RequestHandler
