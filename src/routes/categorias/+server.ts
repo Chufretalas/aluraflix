@@ -1,3 +1,4 @@
+import authenticate from "$lib/server/api_helpers/authenticate";
 import getJson from "$lib/server/api_helpers/getJson";
 import paginate from "$lib/server/api_helpers/paginate";
 import validateColor from "$lib/server/api_helpers/validate_color";
@@ -7,7 +8,8 @@ import type { RequestHandler } from "../videos/$types";
 
 const prisma = new PrismaClient()
 
-export const GET = (async ({ url }) => {
+export const GET = (async ({ url, request }) => {
+    authenticate(request.headers)
     const page = url.searchParams.get("page")
     try {
         let allCategories = await prisma.categorias.findMany({
@@ -64,6 +66,7 @@ async function createEntry(id: number | undefined, titulo: string, cor: string):
 // =========================== //
 
 export const POST = (async ({ request }) => {
+    authenticate(request.headers)
     try {
         const { data, success } = await getJson(request)
 

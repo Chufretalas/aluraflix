@@ -2,10 +2,12 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { PrismaClient } from '@prisma/client';
 import getJson from '$lib/server/api_helpers/getJson';
+import authenticate from '$lib/server/api_helpers/authenticate';
 
 const prisma = new PrismaClient()
 
-export const GET = (async ({ params }) => {
+export const GET = (async ({ params, request }) => {
+    authenticate(request.headers)
     if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "video id deve ser um numero inteiro")
@@ -25,7 +27,8 @@ export const GET = (async ({ params }) => {
 
 // ======================================================================= //
 
-export const DELETE = (async ({ params }) => {
+export const DELETE = (async ({ params, request }) => {
+    authenticate(request.headers)
     if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "video id deve ser um numero inteiro")
@@ -53,6 +56,7 @@ export const DELETE = (async ({ params }) => {
 // ======================================================================= //
 
 async function PUTPATCHHandler(request: Request, params: any) {
+    authenticate(request.headers)
     if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "video id deve ser um numero inteiro")

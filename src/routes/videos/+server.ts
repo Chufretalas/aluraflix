@@ -3,6 +3,7 @@ import type { RequestHandler } from './$types';
 import { PrismaClient, type aluraflix_videos } from '@prisma/client';
 import getJson from '$lib/server/api_helpers/getJson';
 import paginate from '$lib/server/api_helpers/paginate';
+import authenticate from '$lib/server/api_helpers/authenticate';
 
 
 
@@ -10,7 +11,8 @@ const prisma = new PrismaClient()
 
 // ======================================================================= //
 
-export const GET = (async ({ url }) => {
+export const GET = (async ({ url, request }) => {
+    authenticate(request.headers)
     const search = url.searchParams.get("search")
     const page = url.searchParams.get("page")
     let videos
@@ -65,7 +67,7 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
                 id: id,
                 titulo: titulo,
                 descricao: descricao,
-                url: `http://localhost:5173/videos/${id}`,
+                url: `http://localhost:5173/videos/${id}`, // TODO: change this dumb thing
                 categoria_id: categoria_id
             }
         })
@@ -91,6 +93,7 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
 // ======================================================================= //
 
 export const POST = (async ({ request }) => {
+    authenticate(request.headers)
     try {
         const { data, success } = await getJson(request)
 

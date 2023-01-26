@@ -1,11 +1,12 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from '@sveltejs/kit';
 import { PrismaClient } from '@prisma/client';
+import authenticate from '$lib/server/api_helpers/authenticate';
 
 const prisma = new PrismaClient()
 
-export const GET = (async ({ params }) => {
-
+export const GET = (async ({ params, request }) => {
+    authenticate(request.headers)
     if (isNaN(+params.id) || !(Number.isInteger(+params.id))) {
         prisma.$disconnect()
         throw error(400, "categoria id deve ser um numero inteiro")

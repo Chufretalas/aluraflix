@@ -18,7 +18,7 @@ export const POST = (async ({ request }) => {
 
         const { usuario, senha } = data;
 
-        if (usuario == "chuf" && senha == "123abc") {
+        if (usuario == "chuf" && senha == "123abc") { // TODO: create a real user system
             const token = jwt.sign(
                 {
                     usuario,
