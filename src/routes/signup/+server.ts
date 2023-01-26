@@ -1,10 +1,9 @@
 import getJson from "$lib/server/api_helpers/getJson";
-import { PrismaClient } from "@prisma/client";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import bcrypt from "bcrypt";
+import prisma from "$lib/server/client";
 
-const prisma = new PrismaClient()
 
 export const POST = (async ({ request }) => {
     const { data, success } = await getJson(request)
@@ -26,12 +25,9 @@ export const POST = (async ({ request }) => {
             }
         })
 
-        prisma.$disconnect()
-
         return new Response(JSON.stringify({ message: "usuário criado com sucesso" }), { status: 201 })
 
     } catch (err: any) {
-        prisma.$disconnect()
         if (err.message.includes("Unique constraint failed on the fields: (`nome`)")) {
             throw error(400, `usuário com nome: ${data.nome} já existe`)
         }

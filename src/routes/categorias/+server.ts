@@ -2,11 +2,10 @@ import authenticate from "$lib/server/api_helpers/authenticate";
 import getJson from "$lib/server/api_helpers/getJson";
 import paginate from "$lib/server/api_helpers/paginate";
 import validateColor from "$lib/server/api_helpers/validate_color";
-import { PrismaClient, type categorias } from "@prisma/client";
+import prisma from "$lib/server/client";
+import type { categorias } from "@prisma/client";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "../videos/$types";
-
-const prisma = new PrismaClient()
 
 export const GET = (async ({ url, request }) => {
     authenticate(request.headers)
@@ -15,7 +14,6 @@ export const GET = (async ({ url, request }) => {
         let allCategories = await prisma.categorias.findMany({
             orderBy: [{ id: "asc" }]
         })
-        prisma.$disconnect()
         if (page && allCategories.length !== 0) {
             if (isNaN(+page) || !(Number.isInteger(+page))) throw error(400, "page deve ser um valor inteiro")
             const finalCategories = paginate(allCategories);
@@ -26,7 +24,6 @@ export const GET = (async ({ url, request }) => {
         }
         return new Response(JSON.stringify(allCategories))
     } catch (er: any) {
-        prisma.$disconnect()
         if (er.status === 400) throw er
         throw error(500, "unknown error")
     }
@@ -80,13 +77,11 @@ export const POST = (async ({ request }) => {
         if (!data.cor) throw error(400, "cor não pode ser vazia")
         if (!validateColor(data.cor)) throw error(400, "cor deve estar no formato hexadecimal, exemplo: 1cd0d6")
         const dbResponse = await createEntry(data.id, data.titulo, data.cor)
-        prisma.$disconnect()
 
         return new Response(JSON.stringify({ novaCategoria: dbResponse }), {status: 201})
 
     }
     catch (err: any) {
-        prisma.$disconnect()
         console.log(err)
         if (err.status == 400) throw err
         throw error(500, "unknown error")

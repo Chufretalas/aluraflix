@@ -1,13 +1,10 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { PrismaClient, type aluraflix_videos } from '@prisma/client';
 import getJson from '$lib/server/api_helpers/getJson';
 import paginate from '$lib/server/api_helpers/paginate';
 import authenticate from '$lib/server/api_helpers/authenticate';
-
-
-
-const prisma = new PrismaClient()
+import prisma from '$lib/server/client';
+import type { aluraflix_videos } from '@prisma/client';
 
 // ======================================================================= //
 
@@ -26,10 +23,8 @@ export const GET = (async ({ url, request }) => {
                     }
                 }
             })
-            prisma.$disconnect()
             videos = response
         } catch (err) {
-            prisma.$disconnect()
             throw error(400, "unknown error")
         }
     } else {
@@ -37,10 +32,8 @@ export const GET = (async ({ url, request }) => {
             let allVideos = await prisma.aluraflix_videos.findMany({
                 orderBy: [{ id: "asc" }]
             })
-            prisma.$disconnect()
             videos = allVideos
         } catch (er) {
-            prisma.$disconnect()
             throw error(500, "unknown error")
         }
     }
@@ -112,16 +105,12 @@ export const POST = (async ({ request }) => {
         if (data.url.length > 100) throw error(400, "url tem limite de 100 caracteres")
 
         const dbResponse = await createEntry(data.id, data.titulo, data.descricao, data.url, data.categoria_id)
-        prisma.$disconnect()
 
         return new Response(JSON.stringify({ newVideo: dbResponse }), { status: 201 })
 
     }
     catch (err: any) {
-        prisma.$disconnect()
         if (err.status == 400) throw err
         throw error(500, "unknown error")
     }
 }) satisfies RequestHandler
-
-prisma.$disconnect()

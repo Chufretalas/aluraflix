@@ -1,15 +1,13 @@
 import getJson from "$lib/server/api_helpers/getJson"
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from './$types';
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
 import * as dotenv from "dotenv"
+import prisma from "$lib/server/client";
 
 dotenv.config()
-
-const prisma = new PrismaClient()
 
 export const POST = (async ({ request }) => {
     try {
@@ -25,8 +23,6 @@ export const POST = (async ({ request }) => {
         const user = await prisma.usuarios.findFirstOrThrow({
             where: { nome }
         })
-        
-        prisma.$disconnect()
 
         const is_valid = await bcrypt.compareSync(senha, user.senha)
 
@@ -47,7 +43,6 @@ export const POST = (async ({ request }) => {
 
     }
     catch (err: any) {
-        prisma.$disconnect()
         if (err.message && err.message.includes("No usuarios found")) {
             throw error(401, "usuário inexistente")
         }

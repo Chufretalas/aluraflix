@@ -1,7 +1,6 @@
 import getJson from "$lib/server/api_helpers/getJson"
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from './$types';
-import jwt, { JsonWebTokenError } from "jsonwebtoken"
 
 import * as dotenv from "dotenv"
 import validateToken from "$lib/server/api_helpers/validate_token";
