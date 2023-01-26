@@ -60,14 +60,14 @@ export const GET = (async ({ url, request }) => {
 
 // ======================================================================= //
 
-async function createEntry(id: number | undefined, titulo: string, descricao: string, categoria_id: number = 1): Promise<aluraflix_videos> {
+async function createEntry(id: number | undefined, titulo: string, descricao: string, url: string, categoria_id: number = 1): Promise<aluraflix_videos> {
     try {
         const dbResponse = await prisma.aluraflix_videos.create({
             data: {
                 id: id,
                 titulo: titulo,
                 descricao: descricao,
-                url: `http://localhost:5173/videos/${id}`, // TODO: change this dumb thing
+                url: url,
                 categoria_id: categoria_id
             }
         })
@@ -76,7 +76,7 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
         if (err.message.includes("Unique constraint failed on the fields: (`id`)")) {
             if (id === undefined) { // fixes a problem when an id that is higher than the autoincremenet is manually put in
                 try {
-                    return await createEntry(id, titulo, descricao, categoria_id)
+                    return await createEntry(id, titulo, descricao, url, categoria_id)
                 } catch (err2) {
                     throw error(500, "unkown error")
                 }
@@ -105,12 +105,16 @@ export const POST = (async ({ request }) => {
         if (!("titulo" in data && "descricao" in data)) throw error(400, "campos 'titulo e descricao são obrigatórios")
         if (!data.titulo || data.titulo.length > 40) throw error(400, "titulo não pode ser vazio e tem limite de 40 caracteres")
         if (!data.descricao) throw error(400, "descrição não pode ser vazia")
-        if (data.categoria_id && (isNaN(+data.categoria_id) || !Number.isInteger(+data.categoria_id))) throw error(400, "categoria_id deve ser um numero inteiro")
+        if (data.categoria_id && (isNaN(+data.categoria_id) || !Number.isInteger(+data.categoria_id))) {
+            throw error(400, "categoria_id deve ser um numero inteiro")
+        }
+        if (!data.url) throw error(400, "url não pode ser vazia")
+        if (data.url.length > 100) throw error(400, "url tem limite de 100 caracteres")
 
-        const dbResponse = await createEntry(data.id, data.titulo, data.descricao, data.categoria_id)
+        const dbResponse = await createEntry(data.id, data.titulo, data.descricao, data.url, data.categoria_id)
         prisma.$disconnect()
 
-        return new Response(JSON.stringify({ newVideo: dbResponse }), {status: 201})
+        return new Response(JSON.stringify({ newVideo: dbResponse }), { status: 201 })
 
     }
     catch (err: any) {
