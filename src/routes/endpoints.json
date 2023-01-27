@@ -1,0 +1,82 @@
+[
+    [
+        {
+            "url": "POST /api/signup",
+            "description": "Envie um POST com 'nome' e 'senha' em JSON, se os campos forem válidos, a senha passa por hash e um novo usuário é criado no campo de dados."
+        },
+        {
+            "url": "POST /api/login",
+            "description": "Envie um POST com 'nome' e 'senha', se as credenciais forem válidas, retorna um token JWT que é necessário para quase todas as requisições da API. O token tem validade de uma hora."
+        },
+        {
+            "url": "POST /api/validar_token",
+            "description": "Envie um POST com 'token' em JSON para saber se o token em questão ainda é válido."
+        }
+    ],
+    [
+        {
+            "url": "GET /api/videos/free",
+            "description": "Retorna os primeiros 25 videos da base de dados, sendo o único endpoint que não requer um token JWT."
+        },
+        {
+            "url": "GET /api/videos",
+            "description": "Retorna todos os videos cadastrados na base de dados.",
+            "params": [
+                {
+                    "url": "?search=[string]",
+                    "description": "Busca por vídeos que incluem a string de busca no título."
+                },
+                {
+                    "url": "?page=[page_number]",
+                    "description": "Ativa a paginação do resultado, sendo mostrados 5 vídeos por página."
+                }
+            ]
+        },
+        {
+            "url": "GET /api/videos/[id]",
+            "description": "Retorna um video de acordo com a id indicada."
+        },
+        {
+            "url": "GET /api/categorias",
+            "description": "Retorna todas as categorias cadastradas."
+        },
+        {
+            "url": "GET /api/categorias/[id]",
+            "description": "Retorna uma categoria de acordo com a id indicada."
+        },
+        {
+            "url": "GET /api/categorias/[id]/videos",
+            "description": "Retorna todos os vídeos com a id de categoria indicada."
+        }
+    ],
+    [
+        {
+            "url": "POST /api/videos",
+            "description": "Recebe um JSON no corpo da requisição com os campos titulo, descricao, url e, opcionalmente (mas não recomendado), id e cria uma nova entrada de video na base de dados."
+        },
+        {
+            "url": "POST /api/categorias",
+            "description": "Recebe um JSON no corpo da requisição com os campos titulo, cor e, opcionalmente (mas não recomendado), id e cria uma nova entrada de categoria na base de dados."
+        }
+    ],
+    [
+        {
+            "url": "PUT/PATCH /api/videos/[id]",
+            "description": "Recebe um JSON no corpo da requisição com os campos titulo, descrição e/ou url, nesse caso, todos os campos são opcionais, mas ainda seguem suas respectivas regras e tipos de dados. Altera a o vídeo indicado pela id na url com as informações passadas no body, se alguma informação for inválida, por exemplo um titulo grande demais, o campo é ignorado e a edição procede normalmente."
+        },
+        {
+            "url": "PUT/PATCH /api/categorias/[id]",
+            "description": "Recebe um JSON no corpo da requisição com os campos titulo e/ou cor, nesse caso, todos os campos são opcionais, mas ainda seguem suas respectivas regras e tipos de dados. Altera a o vídeo indicado pela id na url com as informações passadas no body, se alguma informação for inválida, o campo é ignorado e a edição procede normalmente."
+        }
+    ],
+    [
+        {
+            "url": "DELETE /api/videos/[id]",
+            "description": "Deleta o video indicado pela id na url."
+        },
+        {
+            "url": "DELETE /api/categorias/[id]",
+            "description": "Deleta a categoria indicada pela id na url."
+        }
+    ]
+]
