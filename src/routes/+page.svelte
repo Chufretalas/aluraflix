@@ -75,7 +75,7 @@
     }
 
     .logo-img {
-        max-width: 35%;
+        max-width: 90%;
         max-height: 15vh;
     }
 
@@ -89,6 +89,12 @@
 
     .intro-wrapper {
         margin: 0 15vw;
+    }
+    
+    @media(max-width: 800px) {
+        .intro-wrapper {
+            margin: 0 2vw;
+        }
     }
 
     .intro-content {
@@ -106,9 +112,19 @@
 
     .endpoints-list-wrapper {
         display: flex;
-        justify-content: space-around;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
         flex-wrap: wrap;
         column-gap: 15px;
+        min-height: 100vh;
+        max-height: 100vh;
+    }
+
+    @media (max-width: 900px) {
+        .endpoints-list-wrapper {
+            max-height: none;
+        }
     }
 
     .endpoints-list__column {
@@ -123,6 +139,12 @@
         box-shadow: 0 0 3px white;
         border-radius: 5px;
         padding: 3px;
+    }
+
+    @media (max-width: 800px) {
+        .endpoint-item {
+            width: auto;
+        }
     }
 
     .endpoint-item span {

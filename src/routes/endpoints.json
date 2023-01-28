@@ -1,20 +1,6 @@
 [
     [
         {
-            "url": "POST /api/signup",
-            "description": "Envie um POST com 'nome' e 'senha' em JSON, se os campos forem válidos, a senha passa por hash e um novo usuário é criado no campo de dados."
-        },
-        {
-            "url": "POST /api/login",
-            "description": "Envie um POST com 'nome' e 'senha', se as credenciais forem válidas, retorna um token JWT que é necessário para quase todas as requisições da API. O token tem validade de uma hora."
-        },
-        {
-            "url": "POST /api/validar_token",
-            "description": "Envie um POST com 'token' em JSON para saber se o token em questão ainda é válido."
-        }
-    ],
-    [
-        {
             "url": "GET /api/videos/free",
             "description": "Retorna os primeiros 25 videos da base de dados, sendo o único endpoint que não requer um token JWT."
         },
@@ -77,6 +63,20 @@
         {
             "url": "DELETE /api/categorias/[id]",
             "description": "Deleta a categoria indicada pela id na url."
+        }
+    ],
+    [
+        {
+            "url": "POST /api/signup",
+            "description": "Envie um POST com 'nome' e 'senha' em JSON, se os campos forem válidos, a senha passa por hash e um novo usuário é criado no campo de dados."
+        },
+        {
+            "url": "POST /api/login",
+            "description": "Envie um POST com 'nome' e 'senha', se as credenciais forem válidas, retorna um token JWT que é necessário para quase todas as requisições da API. O token tem validade de uma hora."
+        },
+        {
+            "url": "POST /api/validar_token",
+            "description": "Envie um POST com 'token' em JSON para saber se o token em questão ainda é válido."
         }
     ]
 ]
