@@ -28,7 +28,7 @@ export const POST = (async ({ request }) => {
         return new Response(JSON.stringify({ message: "usuário criado com sucesso" }), { status: 201 })
 
     } catch (err: any) {
-        if (err.message.includes("Unique constraint failed on the fields: (`nome`)")) {
+        if (err.message && err.message.includes("Unique constraint failed on the fields: (`nome`)")) {
             throw error(400, `usuário com nome: ${data.nome} já existe`)
         }
         if (err.status == 400) throw err
