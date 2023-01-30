@@ -2,8 +2,9 @@ import { error } from "@sveltejs/kit"
 import validateToken from "./validate_token"
 
 /**
-   * Throws an 401 error if teh token is invalid or missing
-   * Returns nothing f it's valid
+   * Throws an 401 error if the token is invalid or missing
+   * 
+   * Returns the user's name it's valid
 */
 export default function authenticate(headers: Headers): string {
     const token = headers.get("token")

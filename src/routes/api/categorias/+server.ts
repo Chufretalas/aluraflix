@@ -32,13 +32,14 @@ export const GET = (async ({ url, request }) => {
 
 // ======================================================================= //
 
-async function createEntry(id: number | undefined, titulo: string, cor: string): Promise<categorias> {
+async function createEntry(id: number | undefined, titulo: string, cor: string, author: string): Promise<categorias> {
     try {
         const dbResponse = await prisma.categorias.create({
             data: {
                 id: id,
                 titulo: titulo.toUpperCase(),
-                cor: cor.toUpperCase()
+                cor: cor.toUpperCase(),
+                author
             }
         })
         return dbResponse
@@ -46,7 +47,7 @@ async function createEntry(id: number | undefined, titulo: string, cor: string):
         if (err.message.includes("Unique constraint failed on the fields: (`id`)")) {
             if (id === undefined) {
                 try {
-                    return await createEntry(id, titulo, cor)
+                    return await createEntry(id, titulo, cor, author)
                 } catch (err2) {
                     throw error(500, "unknown error")
                 }
@@ -63,7 +64,7 @@ async function createEntry(id: number | undefined, titulo: string, cor: string):
 // =========================== //
 
 export const POST = (async ({ request }) => {
-    authenticate(request.headers)
+    const author = authenticate(request.headers)
     try {
         const { data, success } = await getJson(request)
 
@@ -76,7 +77,7 @@ export const POST = (async ({ request }) => {
         if (!data.titulo || data.titulo.length > 30) throw error(400, "titulo não pode ser vazio e tem limite de 30 caracteres")
         if (!data.cor) throw error(400, "cor não pode ser vazia")
         if (!validateColor(data.cor)) throw error(400, "cor deve estar no formato hexadecimal, exemplo: 1cd0d6")
-        const dbResponse = await createEntry(data.id, data.titulo, data.cor)
+        const dbResponse = await createEntry(data.id, data.titulo, data.cor, author)
 
         return new Response(JSON.stringify({ novaCategoria: dbResponse }), {status: 201})
 

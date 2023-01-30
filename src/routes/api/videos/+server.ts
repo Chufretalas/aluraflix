@@ -53,7 +53,14 @@ export const GET = (async ({ url, request }) => {
 
 // ======================================================================= //
 
-async function createEntry(id: number | undefined, titulo: string, descricao: string, url: string, categoria_id: number = 1): Promise<aluraflix_videos> {
+async function createEntry(
+    id: number | undefined,
+    titulo: string,
+    descricao: string,
+    url: string,
+    categoria_id: number = 1,
+    author: string): Promise<aluraflix_videos> {
+
     try {
         const dbResponse = await prisma.aluraflix_videos.create({
             data: {
@@ -61,7 +68,8 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
                 titulo: titulo,
                 descricao: descricao,
                 url: url,
-                categoria_id: categoria_id
+                categoria_id: categoria_id,
+                author
             }
         })
         return dbResponse
@@ -69,7 +77,7 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
         if (err.message.includes("Unique constraint failed on the fields: (`id`)")) {
             if (id === undefined) { // fixes a problem when an id that is higher than the autoincremenet is manually put in
                 try {
-                    return await createEntry(id, titulo, descricao, url, categoria_id)
+                    return await createEntry(id, titulo, descricao, url, categoria_id, author)
                 } catch (err2) {
                     throw error(500, "unknown error")
                 }
@@ -86,7 +94,7 @@ async function createEntry(id: number | undefined, titulo: string, descricao: st
 // ======================================================================= //
 
 export const POST = (async ({ request }) => {
-    authenticate(request.headers)
+    const author = authenticate(request.headers)
     try {
         const { data, success } = await getJson(request)
 
@@ -104,7 +112,7 @@ export const POST = (async ({ request }) => {
         if (!data.url) throw error(400, "url não pode ser vazia")
         if (data.url.length > 100) throw error(400, "url tem limite de 100 caracteres")
 
-        const dbResponse = await createEntry(data.id, data.titulo, data.descricao, data.url, data.categoria_id)
+        const dbResponse = await createEntry(data.id, data.titulo, data.descricao, data.url, data.categoria_id, author)
 
         return new Response(JSON.stringify({ newVideo: dbResponse }), { status: 201 })
 
