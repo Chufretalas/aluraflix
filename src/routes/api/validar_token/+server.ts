@@ -14,7 +14,7 @@ export const POST = (async ({ request }) => {
         if (!success) throw error(400, "body inválido")
 
         if (!data.token) throw error(400, "campo 'token' é obrigatório")
-
+        
         const { is_valid, cause } = validateToken(data.token)
 
         if (is_valid) {

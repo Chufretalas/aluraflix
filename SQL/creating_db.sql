@@ -32,3 +32,27 @@ ALTER TABLE aluraflix_videos
 
 ALTER TABLE aluraflix_videos
     ADD CONSTRAINT authorForeign FOREIGN KEY (author) REFERENCES usuarios(nome);
+
+
+ALTER TABLE categorias
+    ADD author VARCHAR(20);
+
+UPDATE categorias SET author = 'Chufretalas';
+
+ALTER TABLE categorias
+    ALTER COLUMN author SET NOT NULL;
+
+ALTER TABLE categorias
+    ADD CONSTRAINT authorForeign FOREIGN KEY (author) REFERENCES usuarios(nome);
+
+ALTER TABLE aluraflix_videos
+    DROP CONSTRAINT authorForeign;
+
+ALTER TABLE aluraflix_videos
+    ADD CONSTRAINT authorForeign FOREIGN KEY (author) REFERENCES usuarios(nome) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE categorias
+    DROP CONSTRAINT authorForeign;
+
+ALTER TABLE categorias
+    ADD CONSTRAINT authorForeign FOREIGN KEY (author) REFERENCES usuarios(nome) ON DELETE CASCADE ON UPDATE CASCADE;
