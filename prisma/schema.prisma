@@ -13,7 +13,9 @@ model aluraflix_videos {
   descricao    String
   url          String      @db.VarChar(100)
   categoria_id Int?        @default(1)
+  author       String      @db.VarChar(20)
   categorias   categorias? @relation(fields: [categoria_id], references: [id], onDelete: SetDefault)
+  usuarios     usuarios    @relation(fields: [author], references: [nome], onDelete: NoAction, onUpdate: NoAction, map: "authorforeign")
 }
 
 model categorias {
@@ -24,6 +26,7 @@ model categorias {
 }
 
 model usuarios {
-  nome  String @id @db.VarChar(20)
-  senha String
+  nome             String             @id @db.VarChar(20)
+  senha            String
+  aluraflix_videos aluraflix_videos[]
 }

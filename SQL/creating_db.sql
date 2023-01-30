@@ -21,3 +21,14 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nome VARCHAR(20) PRIMARY KEY,
     senha TEXT NOT NULL
 );
+
+ALTER TABLE aluraflix_videos
+    ADD author VARCHAR(20);
+
+UPDATE aluraflix_videos SET author = 'Chufretalas';
+
+ALTER TABLE aluraflix_videos
+    ALTER COLUMN author SET NOT NULL;
+
+ALTER TABLE aluraflix_videos
+    ADD CONSTRAINT authorForeign FOREIGN KEY (author) REFERENCES usuarios(nome);
