@@ -7,13 +7,13 @@ dotenv.config()
 
 export const POST = (async ({ request }) => {
     const password = request.headers.get("authorization")?.split(" ")[1]
-    
-    if(!password || password !== process.env.SG_PASSWORD) {
+
+    if (!password || password !== process.env.SG_PASSWORD) {
         throw error(401, "invalid password")
     }
 
     const { data, success } = await getJson(request)
-    if(!success) {
+    if (!success) {
         throw error(400, "invalid body")
     }
 
@@ -30,8 +30,12 @@ export const POST = (async ({ request }) => {
             }
         })
         console.log(res)
+        if (!res) {
+            throw error(400, "bad request boy, did not save")
+        }
     } catch (e: any) {
         console.log(e)
+        throw error(400, "bad request boy, did not save")
     }
     return new Response(JSON.stringify(data))
 }) satisfies RequestHandler
