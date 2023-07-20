@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS sg_scores (
-    id SERIAL PRIMARY KEY
-    name VARCHAR(12) NOT NULL
-    score INT NOT NULL
-    version VARCHAR(20) NOT NULL
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(12) NOT NULL,
+    score INT NOT NULL,
+    version VARCHAR(20) NOT NULL,
     modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
