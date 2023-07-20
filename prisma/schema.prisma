@@ -33,3 +33,11 @@ model usuarios {
   aluraflix_videos aluraflix_videos[]
   categorias       categorias[]
 }
+
+model sg_scores {
+  id       Int       @id @default(autoincrement())
+  name     String    @db.VarChar(12)
+  score    Int
+  version  String    @db.VarChar(20)
+  modified DateTime? @default(now()) @db.Timestamp(6)
+}
